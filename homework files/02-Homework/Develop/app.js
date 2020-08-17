@@ -13,12 +13,7 @@ function promptUser() {
     {
       type: "list",
       message: "Which type of team member would you like to add?",
-      choices: [
-        "Manager",
-        "Engineer",
-        "Intern",
-        "I dont want to add anymore team members",
-      ],
+      choices: ["Manager", "Engineer", "Intern"],
       name: "role",
     },
   ]);
