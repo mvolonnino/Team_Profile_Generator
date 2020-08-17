@@ -5,9 +5,11 @@ const inquirer = require("inquirer");
 const render = require("./lib/htmlRenderer");
 const fs = require("fs");
 const path = require("path");
-
+// create arr to store each team member that user creates
 var teamMembers = [];
+// create output folder to hold the html file we create
 var output_dir = path.resolve(__dirname, "output");
+// create the path for the html file in the output folder
 var output_path = path.join(output_dir, "index.html"); //fs.writeFile
 
 function startTeamBuild() {
@@ -80,7 +82,7 @@ function addTeamMember() {
           addEngineer(); //create function to prompt engineer questions
           break;
         default:
-          buildTeam();
+          buildTeam(); //create function to take teamMember array and output to html file
       }
     });
 }
@@ -126,6 +128,50 @@ function addIntern() {
       console.log("Intern: ", intern);
       teamMembers.push(intern);
       console.log("teamMembers: ", teamMembers);
+      addTeamMember();
+    });
+}
+
+function addEngineer() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "What is your engineer's name?",
+        name: "name",
+      },
+      {
+        type: "input",
+        message: "What is your engineer's id?",
+        name: "id",
+      },
+      {
+        type: "input",
+        message: "What is your engineer's email?",
+        name: "email",
+        default: () => {},
+        validate: function (email) {
+          valid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
+          if (valid) {
+            return true;
+          } else {
+            console.log(". Please enter a valid email");
+            return false;
+          }
+        },
+      },
+      {
+        type: "input",
+        message: "What is your engineer's GitHub username?",
+        name: "gitHub",
+      },
+    ])
+    .then(function (engineerAnswers) {
+      console.log("engineerAnswers: ", engineerAnswers);
+      const { name, id, email, gitHub } = engineerAnswers;
+      const engineer = new Engineer(name, id, email, gitHub);
+      console.log("engineer: ", engineer);
+      teamMembers.push(engineer);
       addTeamMember();
     });
 }
