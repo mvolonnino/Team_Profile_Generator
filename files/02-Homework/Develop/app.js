@@ -3,15 +3,31 @@ const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
 const render = require("./lib/htmlRenderer");
+
 const fs = require("fs");
 const path = require("path");
+const util = require("util");
 // create arr to store each team member that user creates
 var teamMembers = [];
 // create output folder to hold the html file we create
 var output_dir = path.resolve(__dirname, "output");
+console.log("output_dir: ", output_dir);
 // create the path for the html file in the output folder
-var output_path = path.join(output_dir, "index.html"); //fs.writeFile
+var output_path = path.join(output_dir, "team.html"); //fs.writeFile
 
+const writeFileAsync = util.promisify(fs.writeFile);
+
+function buildTeam() {
+  console.log("teamMembers: ", teamMembers);
+  const team = render(teamMembers);
+  return writeFileAsync(output_path, team)
+    .then(function () {
+      console.log("Successfully created team.html!");
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+}
 function startTeamBuild() {
   console.log("Please build your team: ");
   inquirer
