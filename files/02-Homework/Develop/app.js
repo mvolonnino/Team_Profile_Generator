@@ -7,18 +7,28 @@ const render = require("./lib/htmlRenderer");
 const fs = require("fs");
 const path = require("path");
 const util = require("util");
+const { error } = require("console");
+const writeFileAsync = util.promisify(fs.writeFile);
 // create arr to store each team member that user creates
 var teamMembers = [];
 // create output folder to hold the html file we create
 var output_dir = path.resolve(__dirname, "output");
-console.log("output_dir: ", output_dir);
 // create the path for the html file in the output folder
 var output_path = path.join(output_dir, "team.html"); //fs.writeFile
 
-const writeFileAsync = util.promisify(fs.writeFile);
+const createDir = (output_dir) => {
+  fs.mkdirSync(output_dir, { recursive: true }, (error) => {
+    if (error) {
+      console.log("error: ", error);
+    } else {
+      console.log("directory has been made!");
+    }
+  });
+};
 
 function buildTeam() {
   console.log("teamMembers: ", teamMembers);
+  createDir(output_dir);
   const team = render(teamMembers);
   return writeFileAsync(output_path, team)
     .then(function () {
@@ -28,6 +38,7 @@ function buildTeam() {
       console.log(error);
     });
 }
+
 function startTeamBuild() {
   console.log("Please build your team: ");
   inquirer
@@ -192,5 +203,3 @@ function addEngineer() {
       addTeamMember();
     });
 }
-
-// build team() if there is no output dir then create one or if there is one then write it to the output dir .. that shows html of the answers to the prompts. if there is already an output dir then DONT add a new one
